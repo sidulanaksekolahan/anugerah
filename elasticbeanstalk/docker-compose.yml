@@ -3,7 +3,7 @@ services:
   backend:
     image: "mirfanduri/anugerah-backend:3"
     ports:
-      - "8443:8443"
+      - "8001:8443"
     restart: "always"
     environment:
       SPRING_PROFILES_ACTIVE: dev
