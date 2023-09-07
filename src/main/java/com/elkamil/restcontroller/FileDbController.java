@@ -17,7 +17,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/api/images")
 public class FileDbController {
 
     @Autowired
@@ -141,7 +141,7 @@ public class FileDbController {
     // Pageable sortedByName =
     //  PageRequest.of(0, 3, Sort.by("name"));
 
-    @GetMapping("/paging")
+    @GetMapping
     public ResponseEntity<ResponseMessage> pagination(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "2") Integer size) {
