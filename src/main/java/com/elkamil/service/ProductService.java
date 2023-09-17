@@ -1,6 +1,6 @@
 package com.elkamil.service;
 
-import com.elkamil.entity.FileDB;
+import com.elkamil.entity.Product;
 import com.elkamil.message.ResponseFile;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,17 +9,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface FileDbService {
+public interface ProductService {
 
-    FileDB store(MultipartFile file) throws IOException;
+    Product store(MultipartFile file) throws IOException;
 
-    FileDB getFile(String id);
+    Product getFile(String id);
 
-    Stream<FileDB> getAllFiles();
+    Stream<Product> getAllFiles();
 
-    FileDB deleteImageById(String id);
+    Product deleteImageById(String id);
 
-    Page<FileDB> getPaging(Integer page, Integer size);
+    Page<Product> getPaging(Integer page, Integer size);
 
     List<ResponseFile> getAllDownloadUrls();
 

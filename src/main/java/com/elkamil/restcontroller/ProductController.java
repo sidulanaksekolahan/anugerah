@@ -1,9 +1,10 @@
 package com.elkamil.restcontroller;
 
-import com.elkamil.entity.FileDB;
+import com.elkamil.dto.ProductDTO;
+import com.elkamil.entity.Product;
 import com.elkamil.message.ResponseFile;
 import com.elkamil.message.ResponseMessage;
-import com.elkamil.service.FileDbService;
+import com.elkamil.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -18,13 +19,14 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/images")
-public class FileDbController {
+public class ProductController {
 
     @Autowired
-    private FileDbService fileDbService;
+    private ProductService productService;
 
     @PostMapping(value = "/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ResponseMessage> uploadFile(
+            @RequestParam("file") MultipartFile file) {
 
         String message = "";
         ResponseMessage responseMessage = null;
@@ -40,9 +42,9 @@ public class FileDbController {
         }
 
         try {
-            FileDB result = fileDbService.store(file);
+            Product result = productService.store(file);
 
-            message = "Uploaded the file successfully: " + result.getName();
+            message = "Uploaded the file successfully: " + result.getProductName();
             responseMessage = new ResponseMessage(
                     HttpStatus.ACCEPTED.value(),
                     message,
@@ -67,7 +69,7 @@ public class FileDbController {
     @GetMapping(value = "/downloadUrls")
     public ResponseEntity<ResponseMessage> downloadUrls() {
 
-        List<ResponseFile> fileDownloadUrl = fileDbService.getAllDownloadUrls();
+        List<ResponseFile> fileDownloadUrl = productService.getAllDownloadUrls();
 
         ResponseMessage responseMessage = new ResponseMessage(
                 HttpStatus.OK.value(),
@@ -81,7 +83,7 @@ public class FileDbController {
     @GetMapping(value = "/displayUrls")
     public ResponseEntity<ResponseMessage> displayUrls() {
 
-        List<ResponseFile> fileDownloadUrl = fileDbService.getAllDisplayUrls();
+        List<ResponseFile> fileDownloadUrl = productService.getAllDisplayUrls();
 
         ResponseMessage responseMessage = new ResponseMessage(
                 HttpStatus.OK.value(),
@@ -97,10 +99,10 @@ public class FileDbController {
 
         ResponseMessage responseMessage = null;
 
-        FileDB fileDB = fileDbService.getFile(id);
+        Product fileDB = productService.getFile(id);
 
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"");
+        responseHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getProductName() + "\"");
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -117,7 +119,7 @@ public class FileDbController {
 
         ResponseMessage responseMessage = null;
 
-        FileDB fileDB = fileDbService.getFile(id);
+        Product fileDB = productService.getFile(id);
 
         return new ResponseEntity<>(fileDB.getData(), HttpStatus.FOUND);
     }
@@ -125,8 +127,8 @@ public class FileDbController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteImageById(@PathVariable String id) {
 
-        FileDB result = fileDbService.deleteImageById(id);
-        String message = "Deleted image " +  result.getName() + " successfuly";
+        Product result = productService.deleteImageById(id);
+        String message = "Deleted image " +  result.getProductName() + " successfuly";
 
         ResponseMessage responseMessage = new ResponseMessage(
                 HttpStatus.OK.value(),
@@ -144,9 +146,9 @@ public class FileDbController {
     @GetMapping
     public ResponseEntity<ResponseMessage> pagination(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "2") Integer size) {
+            @RequestParam(defaultValue = "5") Integer size) {
 
-        Page<FileDB> fileDBPage = fileDbService.getPaging(page, size);
+        Page<Product> fileDBPage = productService.getPaging(page, size);
 
         ResponseMessage responseMessage = new ResponseMessage(
                 HttpStatus.OK.value(),

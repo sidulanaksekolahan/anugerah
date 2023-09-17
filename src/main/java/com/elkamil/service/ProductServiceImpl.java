@@ -1,9 +1,9 @@
 package com.elkamil.service;
 
-import com.elkamil.entity.FileDB;
+import com.elkamil.entity.Product;
 import com.elkamil.exception.ImageNotFoundException;
 import com.elkamil.message.ResponseFile;
-import com.elkamil.repository.FileDBRepository;
+import com.elkamil.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class FileDbServiceImpl implements FileDbService {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private FileDBRepository fileDBRepository;
+    private ProductRepository fileDBRepository;
 
     @Override
-    public FileDB store(MultipartFile file) throws IOException {
+    public Product store(MultipartFile file) throws IOException {
 
         // Get original file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -38,22 +38,22 @@ public class FileDbServiceImpl implements FileDbService {
         byte[] data = file.getBytes();
 
         // Construct FileDB
-        FileDB fileDB = new FileDB(fileName, type, data);
+        Product fileDB = new Product(fileName, type, data);
 
         // Save the first FileDB
-        FileDB fileDBFirstSaved = fileDBRepository.save(fileDB);
+        Product fileDBFirstSaved = fileDBRepository.save(fileDB);
 
         // Create fileDisplayImageUri
         String  fileDisplayImageUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/api/image/display/")
+                .path("/api/images/display/")
                 .path(fileDBFirstSaved.getId())
                 .toUriString();
 
         // Create fileDownloadImageUri
         String fileDownloadImageUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/api/image/filesDownload/")
+                .path("/api/images/filesDownload/")
                 .path(fileDBFirstSaved.getId())
                 .toUriString();
 
@@ -64,16 +64,16 @@ public class FileDbServiceImpl implements FileDbService {
         fileDBFirstSaved.setDownloadImageUri(fileDownloadImageUri);
 
         // Save the updated FileDB
-        FileDB fileDBFinalSaved = fileDBRepository.save(fileDBFirstSaved);
+        Product fileDBFinalSaved = fileDBRepository.save(fileDBFirstSaved);
 
         // Return the result
         return fileDBFinalSaved;
     }
 
     @Override
-    public FileDB getFile(String id) {
+    public Product getFile(String id) {
 
-        Optional<FileDB> theFileDb = fileDBRepository.findById(id);
+        Optional<Product> theFileDb = fileDBRepository.findById(id);
 
         if (!theFileDb.isPresent()) {
             throw new ImageNotFoundException("No image with specified id");
@@ -83,15 +83,15 @@ public class FileDbServiceImpl implements FileDbService {
     }
 
     @Override
-    public Stream<FileDB> getAllFiles() {
+    public Stream<Product> getAllFiles() {
 
         return fileDBRepository.findAll().stream();
     }
 
     @Override
-    public FileDB deleteImageById(String id) {
+    public Product deleteImageById(String id) {
 
-        FileDB fileDB = getFile(id);
+        Product fileDB = getFile(id);
 
         fileDBRepository.deleteById(fileDB.getId());
 
@@ -99,7 +99,7 @@ public class FileDbServiceImpl implements FileDbService {
     }
 
     @Override
-    public Page<FileDB> getPaging(Integer page, Integer size) {
+    public Page<Product> getPaging(Integer page, Integer size) {
 
         Pageable pageable = null;
         if ((page <= 0) || (size <= 0)) {
@@ -119,9 +119,9 @@ public class FileDbServiceImpl implements FileDbService {
                 .stream()
                 .map(fileDB -> {
                     return new ResponseFile(
-                            fileDB.getName(),
+                            fileDB.getProductName(),
                             fileDB.getDownloadImageUri(),
-                            fileDB.getType(),
+                            fileDB.getImageType(),
                             fileDB.getData().length);
                 }).collect(Collectors.toList());
     }
@@ -134,9 +134,9 @@ public class FileDbServiceImpl implements FileDbService {
                 .map(fileDB -> {
                     System.out.println("fileDB.getDisplayImageUri(): " + fileDB.getDisplayImageUri());
                     return new ResponseFile(
-                            fileDB.getName(),
+                            fileDB.getProductName(),
                             fileDB.getDisplayImageUri(),
-                            fileDB.getType(),
+                            fileDB.getImageType(),
                             fileDB.getData().length);
                 }).collect(Collectors.toList());
     }

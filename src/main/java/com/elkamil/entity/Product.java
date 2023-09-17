@@ -8,19 +8,28 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "file_db")
-public class FileDB {
+@Table(name = "product")
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "product_name")
+    private String productName;
 
-    @Column(name = "type")
-    private String type;
+    @Column(name = "image_name")
+    private String imageName;
+
+    @Column(name = "price")
+    private Double price;
+
+    @Column(name = "stock")
+    private int stock;
+
+    @Column(name = "image_type")
+    private String imageType;
 
     @Lob
     @Column(name = "data", columnDefinition = "LONGBLOB")
@@ -33,9 +42,9 @@ public class FileDB {
     @Column(name = "download_image_uri")
     private String downloadImageUri;
 
-    public FileDB(String name, String type, byte[] data) {
-        this.name = name;
-        this.type = type;
+    public Product(String name, String type, byte[] data) {
+        this.imageName = name;
+        this.imageType = type;
         this.data = data;
     }
 }
